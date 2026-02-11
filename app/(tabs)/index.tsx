@@ -5,14 +5,19 @@ import { Button, StyleSheet, Text, View } from "react-native";
 export default function HomeScreen() {
   const router = useRouter();
 
-  function PressHandler() {
+  function loginPressHandler() {
+    router.push("/login");
+  }
+
+  function signupPressHandler() {
     router.push("/signup");
   }
 
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>
-      <Button title="Sign Up" onPress={PressHandler} />
+      <Button title="Sign Up" onPress={signupPressHandler} />
+      <Button title="Login" onPress={loginPressHandler} />
     </View>
   );
 }
