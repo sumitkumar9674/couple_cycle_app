@@ -2,21 +2,19 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import { app } from "../firebaseConfig";
+import AuthService from "../../services/AuthService";
 
 export default function SignupScreen() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const router = useRouter();
-  const auth = getAuth(app);
 
   async function signupPressHandler() {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      console.log("success");
-      router.replace("/");
+      await AuthService.signup(email, password);
+      await AuthService.logout();
+      router.replace("/login");
     } catch (error: any) {
       console.log("Signup error:", error.message);
     }

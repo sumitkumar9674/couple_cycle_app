@@ -1,4 +1,7 @@
+// firebaseConfig.ts
+
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBEMJjaS0psUdPh2fqYbxDXzZ2pZuc-vHM",
@@ -7,6 +10,12 @@ const firebaseConfig = {
   storageBucket: "couplesyncapp-31dcf.firebasestorage.app",
   messagingSenderId: "107997509387",
   appId: "1:107997509387:web:3ce0014cf32bb72aa2540e",
+  measurementId: "G-7HJS1VJV9L",
 };
 
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+
+// ⚠️ Memory auth (no persistence)
+const auth = getAuth(app);
+
+export { app, auth };

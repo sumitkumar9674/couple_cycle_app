@@ -1,23 +1,15 @@
-import { useRouter } from "expo-router";
-
 import { Button, StyleSheet, Text, View } from "react-native";
+import AuthService from "../../services/AuthService";
 
 export default function HomeScreen() {
-  const router = useRouter();
-
-  function loginPressHandler() {
-    router.push("/login");
-  }
-
-  function signupPressHandler() {
-    router.push("/signup");
+  async function LogoutPressHandler() {
+    await AuthService.logout();
   }
 
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>
-      <Button title="Sign Up" onPress={signupPressHandler} />
-      <Button title="Login" onPress={loginPressHandler} />
+      <Button title="Log Out" onPress={LogoutPressHandler} />
     </View>
   );
 }
