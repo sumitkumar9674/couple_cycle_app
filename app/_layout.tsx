@@ -3,9 +3,9 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { Stack, usePathname, useRouter } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import "react-native-reanimated";
 
@@ -21,34 +21,47 @@ export const unstable_settings = {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
-  const pathname = usePathname();
-  const router = useRouter();
+  const [initializing, setInitializing] = useState(true);
+  const [authInitialized, setAuthInitialized] = useState(false);
 
-  const isAuthScreen = pathname === "/login" || pathname === "/signup";
+  const router = useRouter();
+  const segments = useSegments();
 
   useEffect(() => {
     const unsubscribe = AuthService.onAuthChange((user) => {
+      if (initializing) {
+        setInitializing(false);
+      }
+
       console.log("AUTH CHECK:", user ? `LOGGED IN (${user.uid})` : "NO USER");
 
-      if (user) {
-        if (isAuthScreen) {
-          router.replace("/");
-        }
-        console.log("Auth state: user logged in");
-      } else {
-        if (!isAuthScreen) {
-          router.replace("/login");
-        }
-        console.log("Auth state: no user");
+      if (!segments[0]) {
+        console.log("Router not ready yet...");
+        return;
+      }
+
+      const inAuthGroup = segments[0] === "(auth)";
+
+      if (user && inAuthGroup) {
+        router.replace("/");
+        console.log("Redirect → Home");
+      }
+
+      if (!user && !inAuthGroup) {
+        router.replace("/login");
+        console.log("Redirect → Login");
       }
     });
 
     return () => unsubscribe();
-  }, [pathname, isAuthScreen, router]);
+  }, [segments]);
+
+  if (initializing) return null;
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="modal"
